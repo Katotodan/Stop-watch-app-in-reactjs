@@ -1,0 +1,55 @@
+.time{
+    font-size: 4rem;
+    font-weight: 700;
+
+}
+.small-title{
+    font-size: 2rem;
+    margin: 1rem 0;
+}
+button.time-controller{
+    display: inline-block;
+    padding: 2rem 1.5rem;
+    margin-right: 2rem;
+    border-radius: 50%;
+    font-size: 2rem;
+    font-weight: 500;
+    border: 2px solid black;
+}
+
+/* Timer component style  */
+.timer-section1{
+    display: flex;
+    gap: 3rem;
+}
+.timer-info{
+    display: flex;
+    justify-content: space-between;
+}
+.timer-info button{
+    color: red;
+}
+.timer-info div button{
+    display: inline-block;
+    margin-left: 0.5rem;
+    color: blue;
+}
+.bars{
+    position: relative;
+}
+.remaining-time{
+    width: 100%;
+    height: 1.5rem;
+    background-color: rgb(79, 79, 194);
+    position: absolute;
+    z-index: 555;
+}
+.bar-time{
+    width: 100%;
+    height: 1.5rem;
+    background-color: gray;
+    position: absolute;
+}
+.time-controller{
+    width: 8rem;
+}

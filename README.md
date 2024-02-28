@@ -1,0 +1,1 @@
+This is a simple stop watch app with a timer build in react js
