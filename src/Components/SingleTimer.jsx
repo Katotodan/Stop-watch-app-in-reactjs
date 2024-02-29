@@ -1,6 +1,6 @@
 import "../App.css"
 import React, {useState, useEffect, useRef} from "react"
-
+import { EditElmt } from "./Edit"
 export const SingleTimer = () =>{
     let initialTime = {
         "hours": 0,
@@ -65,11 +65,10 @@ export const SingleTimer = () =>{
         console.log(initialTime)
     }
     const remove = ()  => setIsRemove(true)
-    const addAnotherTimer = () =>{
-
-    }
+    // const addAnotherTimer = addNewTimer
     return(
         <>
+            <EditElmt/>
             {!isRemove && (
                 <>
                     <div className="timer-section1">
@@ -105,7 +104,7 @@ export const SingleTimer = () =>{
                             <div className="bar-time"></div>
                         </div>
                         <br />
-                        <button className="add-btn" onClick={addAnotherTimer}>Add another Timer</button>
+                        
                     </div>
                 </>
             )}

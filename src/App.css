@@ -42,7 +42,7 @@ button.time-controller{
     height: 1.5rem;
     background-color: rgb(79, 79, 194);
     position: absolute;
-    z-index: 555;
+    z-index: 5;
 }
 .bar-time{
     width: 100%;
@@ -53,3 +53,8 @@ button.time-controller{
 .time-controller{
     width: 8rem;
 }
+
+/* Edit timer */
+/* .border-4{
+    border: 2px solid black;
+} */
