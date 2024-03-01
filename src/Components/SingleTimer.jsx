@@ -3,8 +3,8 @@ import React, {useState, useEffect, useRef} from "react"
 import { EditElmt } from "./Edit"
 export const SingleTimer = () =>{
     let initialTime = {
-        "hours": 0,
-        "munites" : 1,
+        "hour": 0,
+        "minute" : 1,
         "second": 30
     }
     const [time, setTime] = useState({...initialTime})
@@ -18,8 +18,8 @@ export const SingleTimer = () =>{
     const [newWidth, setNewWith] = useState(100)
     const [isRemove, setIsRemove] = useState(false)
     useEffect(()=>{
-        setTotalTime(time.second + (time.munites * 60) + (time.hours * 60 * 60))
-        setRemainingTime(time.second + (time.munites * 60) + (time.hours * 60 * 60))
+        setTotalTime(time.second + (time.minute * 60) + (time.hour * 60 * 60))
+        setRemainingTime(time.second + (time.minute * 60) + (time.hour * 60 * 60))
         pausebtn.current.style.display = "none"
     }, [])
 
@@ -41,12 +41,12 @@ export const SingleTimer = () =>{
             
             if(time.second > 0){
                 time.second = time.second - 1
-            }else if(time.munites > 0){
-                time.munites = time.munites - 1
+            }else if(time.minute > 0){
+                time.minute = time.minute - 1
                 time.second = 59
-            }else if(time.hours > 0){
-                time.hours = time.hours - 1
-                time.munites = 59
+            }else if(time.hour > 0){
+                time.hour = time.hour - 1
+                time.minute = 59
             }
         }, 1000);
         setIntervalId(timerInterval);
@@ -64,21 +64,42 @@ export const SingleTimer = () =>{
         setTime(initialTime)
         console.log(initialTime)
     }
-    const remove = ()  => setIsRemove(true)
-    // const addAnotherTimer = addNewTimer
+    const removeTimer = ()  => setIsRemove(true)
+
+    // Edit timer
+    const [isEdit, setIsEdit] = useState(false)
+    const editTimer = () =>{
+        
+        setIsEdit(true)
+    }
+    const hideEditSection = () =>{
+        setIsEdit(false)
+    }
+    const doneEditing = (currentTime)=>{
+        initialTime = currentTime
+        setTime({...initialTime})
+        setTotalTime(currentTime)
+        setTotalTime(currentTime.second + (currentTime.minute * 60) + (currentTime.hour * 60 * 60))
+        setRemainingTime(currentTime.second + (currentTime.minute * 60) + (currentTime.hour * 60 * 60))
+        resetTime()
+        setIsEdit(false)
+    }
     return(
         <>
-            <EditElmt/>
+            {
+                isEdit && (<EditElmt hide={hideEditSection} editTime={doneEditing} time = {initialTime}/>)
+            }
+            
             {!isRemove && (
                 <>
                     <div className="timer-section1">
                         <div className="conter ">
-                            <span className="hours  time">
-                                {time.hours > 10 ? time.hours : "0"+ time.hours }    
+                            <span className="hour  time">
+                                {time.hour > 10 ? time.hour : "0"+ time.hour }    
                             </span>  
                             <span className="time"> : </span>  
-                            <span className="munites time">
-                                {time.munites > 10 ? time.munites : "0"+ time.munites }     
+                            <span className="minute time">
+                                {time.minute > 10 ? time.minute : "0"+ time.minute }     
                             </span> 
                             <span className="time"> : </span> 
                             <span className="seconds time">
@@ -95,9 +116,9 @@ export const SingleTimer = () =>{
                         <div className="timer-info">
                             <div>
                                 <span>Timer 1 (00:00:00)</span>
-                                <button>📝 Edit</button>
+                                <button onClick={editTimer}>📝 Edit</button>
                             </div>
-                            <button onClick={remove}>X Remove</button>
+                            <button onClick={removeTimer}>X Remove</button>
                         </div>
                         <div className="bars">
                             <div className="remaining-time" ref={barTime}></div>
