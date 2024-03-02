@@ -92,7 +92,7 @@ export const SingleTimer = () =>{
             
             {!isRemove && (
                 <>
-                    <div className="timer-section1">
+                    <div className="timer-section1 mt-5">
                         <div className="conter ">
                             <span className="hour  time">
                                 {time.hour > 10 ? time.hour : "0"+ time.hour }    

@@ -54,7 +54,10 @@ button.time-controller{
     width: 8rem;
 }
 
-/* Edit timer */
-/* .border-4{
-    border: 2px solid black;
-} */
+/* Edit style */
+.edit-container{
+    top: 2.5rem;
+    height: calc(100vh - 2.5rem);
+    background-color: rgba(148, 163, 184, 0.8);
+    /* background-color: rgba(rgb(0, 26, 255), rgb(74, 124, 74), rgb(93, 93, 197), 0.6); */
+}
