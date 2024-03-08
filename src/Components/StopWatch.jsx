@@ -1,63 +1,131 @@
 import "../App.css"
-import React, {useState} from "react"
+import React, {useState, useRef, useEffect} from "react"
+import { SplitComponent } from "./SplitComponent"
+import { SingleSpit } from "./SingleSplit"
 export const StopWatch = () =>{
-    const [time, setTime] = useState({
-        "hour": 0,
-        "minute": 0,
-        "second": 0
-    })
-    const [intervalId, setIntervalId] = useState(null);
+    const [hour, setHour] = useState(0)
+    const [minute, setMinute] = useState(0)
+    const [second, setSecond] = useState(0)
     
-    const startConting =()=>{
-        const interval = setInterval(() => {
-            if(time.second >= 60){
-                if(time.minute >= 60){
-                    // Add hour, the programe doesn't support days
-                    if(time.hour <=24){
-                        const newTime = {
-                            "hour": time.hour + 1,
-                            "minute": 0,
-                            "second": 0
-                        }
-                        setTime(newTime)
-                    }
-                }else{
-                    // Add minute
-                    const newTime = {
-                        "hour": time.hour,
-                        "minute": time.minute + 1,
-                        "second": 0
-                    }
-                    setTime(newTime)
-                }
+    const [intervalId, setIntervalId] = useState(null);
 
+    // SplitSingle time functinabilities start here
+    const [currentTime, setCurrentTime] = useState(0)
+    const [previousTime, setPreviouusTime] = useState(0)
+    const [splitTimeArray, setSplitTimeArray] = useState([])
+    const [isAscendingOrder, setIsAscendingOrder] = useState(true)
+    useEffect(() =>{
+        if(currentTime != 0){
+            if(isAscendingOrder){
+                setSplitTimeArray(prev => ([
+                    ...prev,
+                    {
+                        "label" :"Pause",
+                        "index": prev.length,
+                        "currentTime":currentTime,
+                        "previousTime":previousTime, 
+                        "TimeNow": new Date().toLocaleTimeString()
+                    }
+                ]))
             }else{
-                // Add second
-                const newTime = {
-                    "hour": time.hour,
-                    "minute": time.minute,
-                    "second": time.second + 1
-                }
-                setTime(newTime)
+                setSplitTimeArray(prev => ([
+                    {
+                        "label" :"Pause",
+                        "index": prev.length,
+                        "currentTime":currentTime,
+                        "previousTime":previousTime, 
+                        "TimeNow": new Date().toLocaleTimeString()
+                    },
+                    ...prev
+                ]))
             }
-        }, 1000);
-        setIntervalId(interval);
+            
+        }  
+    }, [currentTime])
 
+    const splitTimeElmnt = splitTimeArray.map(el=>{
+        return(
+            <>
+            <SingleSpit 
+            index = {el.index}
+            label={el.label} 
+            currentTime={el.currentTime} 
+            previousTime={el.previousTime} 
+            TimeNow={el.TimeNow}/>
+            </>
+        )   
+    })
+    const reverseOrder = (arg) =>{
+        if(arg == "desc"){
+            setSplitTimeArray((prev) => [...prev].reverse())
+        }else{
+            setSplitTimeArray((prev) => [...prev].reverse())
+        }
+        setIsAscendingOrder(!isAscendingOrder)
+        
     }
+    
+    
+    const startBtn = useRef(null)
+    const startConting =()=>{
+        if(startBtn.current.innerHTML == "Start"){
+            startBtn.current.innerHTML = "Pause"
+            setPreviouusTime(hour * 60 * 60 + minute * 60 + second)
+            const interval = setInterval(() => {
+                if(second >= 60){
+                    if(minute >= 60){
+                        // Add hour, the programe doesn't support days
+                        if(hour <=24){
+                            setHour((prev) => prev + 1)
+                            setMinute(0)
+                            setSecond(0)               
+                        }
+                    }else{
+                        // Add minute
+                        setMinute(prev => prev + 1)
+                        setSecond(0)  
+                    }
+    
+                }else{
+                    // Add second
+                    setSecond(prev => prev + 1)
+                }
+            }, 1000);
+            setIntervalId(interval);
+        }else{
+            startBtn.current.innerHTML = "Start"
+            clearInterval(intervalId)
+            setCurrentTime(hour * 60 * 60 + minute * 60 + second)
+            
+            
+        }  
+    }
+    
     return(
         <>
             <div className="conter ">
-                <span className="hours  time">{time.hour}</span>  <span className="time"> : </span>  
-                <span className="munites time"> {time.minute}</span> <span className="time"> : </span> 
-                <span className="seconds time"> {time.second}</span>
+                <span className="hours  time">
+                    {hour >= 10 ? hour : "0"+ hour }
+                </span>  <span className="time"> : </span>  
+                <span className="munites time">
+                    {minute >= 10 ? minute : "0"+ minute }
+                </span> <span className="time"> : </span> 
+                <span className="seconds time">
+                    {second >= 10 ? second : "0" + second }
+                </span>
             </div>
             <div className="">
                 <h2 className="small-title">Split Time</h2>
-                <button className="time-controller" onClick={startConting}>Start</button>
+                <button className="time-controller" ref={startBtn} 
+                onClick={startConting}>Start</button>
                 <button className="time-controller">Split</button>
                 <button className="time-controller">Resert</button>
             </div>
+            <SplitComponent reverse= {reverseOrder}/>
+            {splitTimeElmnt}
         </>
     )
 }
-// Working on time interval in stopwatch
+
+
+// Split btn and delete a item

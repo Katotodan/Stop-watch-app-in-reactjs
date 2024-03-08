@@ -95,15 +95,15 @@ export const SingleTimer = () =>{
                     <div className="timer-section1 mt-5">
                         <div className="conter ">
                             <span className="hour  time">
-                                {time.hour > 10 ? time.hour : "0"+ time.hour }    
+                                {time.hour >= 10 ? time.hour : "0"+ time.hour }    
                             </span>  
                             <span className="time"> : </span>  
                             <span className="minute time">
-                                {time.minute > 10 ? time.minute : "0"+ time.minute }     
+                                {time.minute >= 10 ? time.minute : "0"+ time.minute }     
                             </span> 
                             <span className="time"> : </span> 
                             <span className="seconds time">
-                                {time.second > 10 ? time.second : "0" + time.second } 
+                                {time.second >= 10 ? time.second : "0" + time.second } 
                             </span>
                         </div>
                         <div className="">
