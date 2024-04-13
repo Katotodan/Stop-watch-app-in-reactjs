@@ -3,10 +3,18 @@ import React, {useState, useRef, useEffect} from "react"
 import { SplitComponent } from "./SplitComponent"
 import { SingleSpit } from "./SingleSplit"
 export const StopWatch = () =>{
+    const [time, setTime] = useState({
+        "hour" : 0,
+        "minute" : 0,
+        "second" : 0
+    })
     const [hour, setHour] = useState(0)
     const [minute, setMinute] = useState(0)
     const [second, setSecond] = useState(0)
     
+    const startBtn = useRef(null)
+    const splitBtn = useRef(null)
+
     const [intervalId, setIntervalId] = useState(null);
 
     // SplitSingle time functinabilities start here
@@ -15,12 +23,13 @@ export const StopWatch = () =>{
     const [splitTimeArray, setSplitTimeArray] = useState([])
     const [isAscendingOrder, setIsAscendingOrder] = useState(true)
     useEffect(() =>{
+        const splitMethod = splitBtn.current.disabled == true ? "pause" : "split"
         if(currentTime != 0){
             if(isAscendingOrder){
                 setSplitTimeArray(prev => ([
                     ...prev,
                     {
-                        "label" :"Pause",
+                        "label" :splitMethod,
                         "index": prev.length,
                         "currentTime":currentTime,
                         "previousTime":previousTime, 
@@ -30,7 +39,7 @@ export const StopWatch = () =>{
             }else{
                 setSplitTimeArray(prev => ([
                     {
-                        "label" :"Pause",
+                        "label" :splitMethod,
                         "index": prev.length,
                         "currentTime":currentTime,
                         "previousTime":previousTime, 
@@ -39,8 +48,11 @@ export const StopWatch = () =>{
                     ...prev
                 ]))
             }
+            if(splitMethod == "pause") {
+                splitBtn.current.disabled = true
+            }
             
-        }  
+        }
     }, [currentTime])
 
     const splitTimeElmnt = splitTimeArray.map(el=>{
@@ -64,40 +76,63 @@ export const StopWatch = () =>{
         setIsAscendingOrder(!isAscendingOrder)
         
     }
+
+    const splitFtn =()=>{
+       setCurrentTime(time.hour * 60 * 60 + time.minute * 60 + time.second) 
+    }
     
     
-    const startBtn = useRef(null)
+    
     const startConting =()=>{
         if(startBtn.current.innerHTML == "Start"){
             startBtn.current.innerHTML = "Pause"
-            setPreviouusTime(hour * 60 * 60 + minute * 60 + second)
+            splitBtn.current.disabled = false
+            setPreviouusTime(time.hour * 60 * 60 + time.minute * 60 + time.second)
+
+            let updatedSecond = 0
+            let updatedMinute = 0
+            let updatedHour = 0
             const interval = setInterval(() => {
-                if(second >= 60){
-                    if(minute >= 60){
-                        // Add hour, the programe doesn't support days
-                        if(hour <=24){
-                            setHour((prev) => prev + 1)
-                            setMinute(0)
-                            setSecond(0)               
-                        }
-                    }else{
-                        // Add minute
-                        setMinute(prev => prev + 1)
-                        setSecond(0)  
-                    }
+                // Add second
+                if(updatedSecond < 20){
+                    updatedSecond += 1
+                    setTime(prev =>({
+                        ...prev,
+                        second: prev.second + 1
+                    }))
     
                 }else{
-                    // Add second
-                    setSecond(prev => prev + 1)
+                    if(updatedMinute < 60){
+                        // Add minute
+                        updatedMinute += 1
+                        setTime(prev =>({
+                            ...prev,
+                            second: 0,
+                            minute: prev.minute + 1
+                        }))
+                        updatedSecond = 0
+                    }else{
+                        // Add hour, the programe doesn't support days
+                        if(updatedHour <=24){
+                            updatedHour += 1
+                            setTime(prev => ({
+                                hour: prev.hour + 1,
+                                minute : 0,
+                                second: 0
+                            })) 
+                            updatedMinute = 0
+                            updatedSecond = 0              
+                        }
+                    }
                 }
+                console.log(time.second)
             }, 1000);
             setIntervalId(interval);
         }else{
             startBtn.current.innerHTML = "Start"
+            splitBtn.current.disabled = true
             clearInterval(intervalId)
-            setCurrentTime(hour * 60 * 60 + minute * 60 + second)
-            
-            
+            setCurrentTime(time.hour * 60 * 60 + time.minute * 60 + time.second)   
         }  
     }
     
@@ -105,20 +140,21 @@ export const StopWatch = () =>{
         <>
             <div className="conter ">
                 <span className="hours  time">
-                    {hour >= 10 ? hour : "0"+ hour }
+                    {time.hour >= 10 ? time.hour : "0"+ time.hour }
                 </span>  <span className="time"> : </span>  
                 <span className="munites time">
-                    {minute >= 10 ? minute : "0"+ minute }
+                    {time.minute >= 10 ? time.minute : "0"+ time.minute }
                 </span> <span className="time"> : </span> 
                 <span className="seconds time">
-                    {second >= 10 ? second : "0" + second }
+                    {time.second >= 10 ? time.second : "0" + time.second }
                 </span>
             </div>
             <div className="">
                 <h2 className="small-title">Split Time</h2>
                 <button className="time-controller" ref={startBtn} 
                 onClick={startConting}>Start</button>
-                <button className="time-controller">Split</button>
+                <button className="time-controller" onClick={splitFtn}
+                ref={splitBtn}>Split</button>
                 <button className="time-controller">Resert</button>
             </div>
             <SplitComponent reverse= {reverseOrder}/>
